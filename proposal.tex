@@ -1,5 +1,5 @@
 \documentclass[11pt]{article}
-\usepackage[a4paper,left=16mm, right=16mm, top=16mm, bottom=20mm]{geometry}
+\usepackage[a4paper,left=16mm, right=16mm, top=15mm, bottom=20mm]{geometry}
 \usepackage{hyperref}
 \usepackage{multicol}
 
@@ -15,6 +15,12 @@
 
 \sectionheader{Domain Background}
 
+Machine learning is used in a wide variety of fields today. 
+Luca Talenti et al. \cite{malaria} for example used a classification model to predict 
+the severity criteria in imported malaria. In this project, machine learning will be used
+to build a model that can decide based on the role information of an employee whether
+that employee shall have access to a specific resource \cite{kaggleAmazon}. 
+\\ \\
 An employee that has to use a computer in order to fulfill their tasks needs access 
 to certain areas of software programs or access rights to execute actions such as read, 
 write or delete a document. While working, employees may encounter that they don't have a 
@@ -41,10 +47,15 @@ As well as the problem the data stems from the {\it Amazon.com Employee Access C
 Kaggle Competition} \cite{kaggleAmazon}. It is real historical data that was collected in 
 2010 and 2011 by Amazon. The dataset consists of approx. 32000 rows. Each row contains
 eight columns that provide role information for an employee, and an ID specifying a resource. 
+The eight columns consist of the manager of the current employee, two role grouping categories,
+a role department description, a role business title, a role family description, an
+extended role family description and a role code, which is unique to each role. Each of these
+columns contains numbers which are IDs. Therefore it is expected that a vectorization of 
+the columns is necessary and that the dimensionality of the dataset will increase tremendously.
 Each row has an action, labeled either 0 or 1. Where 1 means that the resource was 
-approved for the employee and 0 means that it was not. The data comes also with an unlabeled
-dataset that is used as a test set for which the predictions should be made. To access the
-true labels of that data set a submission to the Kaggle competition will be necessary.
+approved for the employee and 0 means that it was not. Those class labels are clearly balanced. 
+In more than 94 \% of the cases the access was granted where only in nearly 6 \% of the cases 
+the access was denied.
 \\ \\
 The dataset is appropriate for the problem at hand because it contains all the required 
 information to train a classification model that determines whether an employee should be 
@@ -61,8 +72,11 @@ For example by dividing the number of correctly classified entries by the total 
 of entries in the dataset one can calculate the accuracy of the model.
 \\ \\
 \sectionheader{Benchmark Model}
-
-Because the problems stems from a Kaggle competition the result of 
+An out of the box logistic regression model will be used as the benchmark for this project,
+because the model is fast, simple to implement and to interpret and should give far better
+results than random guessing for the problem at hand.
+\\ \\
+Because the problems stems from a Kaggle competition, as a secondary benchmark, the result of 
 the final solution will be compared to the result of the solution of the team that won the competition. 
 The submissions to the competition were judged on the {\it area under the ROC curve (auc)} metric. 
 Therefore this metric will be used to compare the results. The winning team got an {\it auc} value 
@@ -94,35 +108,46 @@ In order to gain further inside the data will be visualized. Any two features co
 in a scatter plot were positive results (access granted) are marked in e.g. green and negative 
 results (access denied) are marked in e.g. red.
 A scatter plot would also help to visualize whether any two features are correlated.
-\\ \\
 If the exploration step found outliers they will be removed. Missing data will be filled in or
-the whole row will be dropped. If applicable, transformations 
-such as regularization will be applied. Features that were observed to don't provide any 
-insides will be disregarded. A principle component analysis might be used in order to 
-discover the features with the highest influence to the outcome or to justify 
-the feature removal.
+the whole row will be dropped. 
 \\ \\
 The dataset will be split into a training and testing set.
-Many different models will be trained including both simple and more complex possibly combined models
-and their performance will be quantified based on the {\it auc} metric. The model performance will 
-also be compared based on computation time.
+Many different models will be trained using standard parameters. 
+The plan is to try logistic regression, Naive Bayes, decision trees, SVM,
+random forrest, AdaBoost, XGBoost and LightGBM as models.
+The models will be quantified based on the {\it auc} metric and based on computation time.
 Other metrics which are applicable for classification problems, 
 such as {\it F-Scores}, {\it confusion matrix} or {\it precison} and {\it recall} might also be 
-taken into consideration.
+taken into consideration. It will be checked whether the models are overfitting or underfitting.
 Because the dataset is rather small, K-fold cross-validation 
 will be used. This ensures that the training set doesn't have to be reduced any further to 
 create a separate validation set.
 A {\it ROC} curve will be plotted for each model.
 \\ \\
-The best model will be further examined and tweaked in order to improve the performance. 
-Different sets of hyper-parameters will be tried out. The final model will be evaluated on the test set.
+After the models have been trained, if applicable, transformations 
+such as regularization will be applied. Features that were observed to don't provide any 
+insides will be disregarded. A principle component analysis might be used in order to 
+discover the features with the highest influence to the outcome or to justify 
+the feature removal. The performance of the updated models will be compared to the unmodified ones
+to see whether the modifications are helping or not.
+\\ \\
+The best three models will be further examined and tweaked in order to improve the performance. 
+Different sets of hyper-parameters will be tried out. It is planned to use grid search or 
+random search to find the best hyperparameters for each model. The tweaked models will be evaluated on the test set
+and compared based on the {\it auc} performance metric.
 If it is possible to make a late submission to the Kaggle competition and Kaggle returns the 
 value of the {\it auc}, this result will be compared with the benchmark. Otherwise the result on the
 test set will be used for this comparison.
 
-\newpage
-
     \begin{thebibliography}{9}
+
+        \bibitem{malaria}
+        L1 logistic regression as a feature selection step for training stable 
+        classification trees for the prediction of severity criteria in imported malaria
+
+        \textit{Luca Talenti, Margaux Luck, Anastasia Yartseva, Nicolas Argy, Sandrine Houzé, Cecilia Damon}
+
+        \href{https://arxiv.org/abs/1511.06663}{arXiv:1511.06663 [cs.LG]}
 
         \bibitem{kaggleAmazon}
         Amazon.com -- Employee Access Challenge 
@@ -131,7 +156,7 @@ test set will be used for this comparison.
 
         \href{https://www.kaggle.com/c/amazon-employee-access-challenge}
         {https://www.kaggle.com/c/amazon-employee-access-challenge},
-
+        
 
         \bibitem{rocCurve}
         Receiver operating characteristic 
